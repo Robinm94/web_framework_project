@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen ">
@@ -7,18 +9,18 @@ export default function Home() {
           Manage your budgets and expenses effortlessly.
         </p>
         <div className="flex space-x-4 justify-center">
-          <a
+          <Link
             href="/login"
             className="bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             Login
-          </a>
-          <a
+          </Link>
+          <Link
             href="/signup"
             className="bg-gray-300 text-gray-700 py-2 px-4 rounded-md shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
           >
             Sign Up
-          </a>
+          </Link>
         </div>
       </div>
     </div>

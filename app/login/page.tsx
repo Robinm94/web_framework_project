@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function LoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -41,6 +43,14 @@ export default function LoginPage() {
             </button>
           </div>
         </form>
+        <div className="mt-4 text-center">
+          <Link
+            href="/dashboard"
+            className="bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Temp: Go to Dashboard
+          </Link>
+        </div>
       </div>
     </div>
   );

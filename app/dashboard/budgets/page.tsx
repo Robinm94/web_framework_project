@@ -1,8 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface Budget {
-  id: number;
+  _id: string;
   name: string;
   amount: number;
   month: string;
@@ -10,40 +10,41 @@ interface Budget {
 }
 
 export default function BudgetPage() {
-  const [budgets, setBudgets] = useState<Budget[]>([
-    { id: 1, name: "Groceries", amount: 200, month: "January", year: 2023 },
-    { id: 2, name: "Rent", amount: 1000, month: "January", year: 2023 },
-  ]);
-  const [newBudget, setNewBudget] = useState({
-    name: "",
-    amount: "",
-    month: "",
-    year: "",
-  });
+  const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [newBudget, setNewBudget] = useState({ name: "", amount: "", month: "", year: "" });
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setNewBudget({ ...newBudget, [name]: value });
+  // Fetch existing budgets from API
+  useEffect(() => {
+    async function fetchBudgets() {
+      const response = await fetch("/api/budgets");
+      const data = await response.json();
+      setBudgets(data);
+    }
+    fetchBudgets();
+  }, []);
+
+  // Handle input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setNewBudget({ ...newBudget, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newId = budgets.length ? budgets[budgets.length - 1].id + 1 : 1;
-    setBudgets([
-      ...budgets,
-      {
-        id: newId,
-        name: newBudget.name,
-        amount: parseFloat(newBudget.amount),
-        month: newBudget.month,
-        year: parseInt(newBudget.year),
-      },
-    ]);
-    setNewBudget({ name: "", amount: "", month: "", year: "" });
+    const response = await fetch("/api/budgets", {
+      method: "POST",
+      body: JSON.stringify(newBudget),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (response.ok) {
+      const addedBudget = await response.json();
+      setBudgets([...budgets, addedBudget]); // Update UI after adding new budget
+      setNewBudget({ name: "", amount: "", month: "", year: "" }); // Clear form
+    }
   };
 
+  // Group budgets by month-year
   const groupedBudgets = budgets.reduce((acc, budget) => {
     const key = `${budget.month}-${budget.year}`;
     if (!acc[key]) {
@@ -55,6 +56,7 @@ export default function BudgetPage() {
 
   return (
     <div className="p-4 max-w-4xl mx-auto flex space-x-4">
+      {/* Left Side - Existing Budgets */}
       <div className="w-1/2 overflow-y-auto h-screen">
         <h1 className="text-2xl font-bold mb-4">Budget</h1>
         <h2 className="text-xl font-semibold mb-2">Existing Budgets</h2>
@@ -64,7 +66,7 @@ export default function BudgetPage() {
               <h3 className="text-lg font-semibold">{key}</h3>
               <ul>
                 {groupedBudgets[key].map((budget) => (
-                  <li key={budget.id} className="border-b py-2">
+                  <li key={budget._id} className="border-b py-2">
                     {budget.name}: ${budget.amount}
                   </li>
                 ))}
@@ -73,6 +75,8 @@ export default function BudgetPage() {
           ))}
         </ul>
       </div>
+
+      {/* Right Side - Add New Budget */}
       <div className="w-1/2">
         <h2 className="text-2xl font-semibold mb-2">Create New Budget</h2>
         <form onSubmit={handleSubmit} className="space-y-4">

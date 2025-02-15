@@ -11,7 +11,12 @@ interface Budget {
 
 export default function BudgetPage() {
   const [budgets, setBudgets] = useState<Budget[]>([]);
-  const [newBudget, setNewBudget] = useState({ name: "", amount: "", month: "", year: "" });
+  const [newBudget, setNewBudget] = useState({
+    name: "",
+    amount: "",
+    month: "",
+    year: "",
+  });
 
   // Fetch existing budgets from API
   useEffect(() => {
@@ -31,6 +36,8 @@ export default function BudgetPage() {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Form Submitted"); // Debugging message
+    
     const response = await fetch("/api/budgets", {
       method: "POST",
       body: JSON.stringify(newBudget),
@@ -39,8 +46,11 @@ export default function BudgetPage() {
 
     if (response.ok) {
       const addedBudget = await response.json();
+      console.log("Budget added:", addedBudget); // Debugging message
       setBudgets([...budgets, addedBudget]); // Update UI after adding new budget
       setNewBudget({ name: "", amount: "", month: "", year: "" }); // Clear form
+    } else {
+      console.log("Failed to add budget:", response.statusText); // Debugging message
     }
   };
 

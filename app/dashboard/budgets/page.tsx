@@ -29,7 +29,9 @@ export default function BudgetPage() {
   }, []);
 
   // Handle input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setNewBudget({ ...newBudget, [e.target.name]: e.target.value });
   };
 
@@ -37,7 +39,7 @@ export default function BudgetPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form Submitted"); // Debugging message
-    
+
     const response = await fetch("/api/budgets", {
       method: "POST",
       body: JSON.stringify(newBudget),
@@ -55,7 +57,7 @@ export default function BudgetPage() {
   };
 
   // Group budgets by month-year
-  const groupedBudgets = budgets.reduce((acc, budget) => {
+  const groupedBudgets = budgets?.reduce((acc, budget) => {
     const key = `${budget.month}-${budget.year}`;
     if (!acc[key]) {
       acc[key] = [];

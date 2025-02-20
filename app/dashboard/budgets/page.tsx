@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { Pencil, Trash } from "lucide-react";
 
 interface Budget {
   _id: string;
@@ -17,8 +18,8 @@ export default function BudgetPage() {
     month: "",
     year: "",
   });
+  const [editingId, setEditingId] = useState<string | null>(null);
 
-  // Fetch existing budgets from API
   useEffect(() => {
     async function fetchBudgets() {
       const response = await fetch("/api/budgets");
@@ -28,58 +29,88 @@ export default function BudgetPage() {
     fetchBudgets();
   }, []);
 
-  // Handle input changes
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     setNewBudget({ ...newBudget, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form Submitted"); // Debugging message
-
-    const response = await fetch("/api/budgets", {
-      method: "POST",
-      body: JSON.stringify(newBudget),
-      headers: { "Content-Type": "application/json" },
-    });
-
-    if (response.ok) {
-      const addedBudget = await response.json();
-      console.log("Budget added:", addedBudget); // Debugging message
-      setBudgets([...budgets, addedBudget]); // Update UI after adding new budget
-      setNewBudget({ name: "", amount: "", month: "", year: "" }); // Clear form
+    if (editingId) {
+      // Update existing budget
+      const response = await fetch(`/api/budgets/${editingId}`, {
+        method: "PUT",
+        body: JSON.stringify(newBudget),
+        headers: { "Content-Type": "application/json" },
+      });
+      if (response.ok) {
+        const updatedBudget = await response.json();
+        setBudgets(budgets.map(b => (b._id === editingId ? updatedBudget : b)));
+        setEditingId(null);
+      }
     } else {
-      console.log("Failed to add budget:", response.statusText); // Debugging message
+      // Create new budget
+      const response = await fetch("/api/budgets", {
+        method: "POST",
+        body: JSON.stringify(newBudget),
+        headers: { "Content-Type": "application/json" },
+      });
+      if (response.ok) {
+        const addedBudget = await response.json();
+        setBudgets([...budgets, addedBudget]);
+      }
+    }
+    setNewBudget({ name: "", amount: "", month: "", year: "" });
+  };
+
+  const handleEdit = (budget: Budget) => {
+    setNewBudget({
+      name: budget.name,
+      amount: String(budget.amount),
+      month: budget.month,
+      year: String(budget.year),
+    });
+    setEditingId(budget._id);
+  };
+
+  const handleDelete = async (id: string) => {
+    const response = await fetch(`/api/budgets/${id}`, { method: "DELETE" });
+    if (response.ok) {
+      setBudgets(budgets.filter(b => b._id !== id));
     }
   };
 
-  // Group budgets by month-year
-  const groupedBudgets = budgets?.reduce((acc, budget) => {
+  const groupedBudgets = budgets.reduce((acc, budget) => {
     const key = `${budget.month}-${budget.year}`;
-    if (!acc[key]) {
-      acc[key] = [];
-    }
+    if (!acc[key]) acc[key] = [];
     acc[key].push(budget);
     return acc;
   }, {} as Record<string, Budget[]>);
 
   return (
     <div className="p-4 max-w-4xl mx-auto flex space-x-4">
-      {/* Left Side - Existing Budgets */}
       <div className="w-1/2 overflow-y-auto h-screen">
         <h1 className="text-2xl font-bold mb-4">Budget</h1>
         <h2 className="text-xl font-semibold mb-2">Existing Budgets</h2>
         <ul className="mb-4">
-          {Object.keys(groupedBudgets).map((key) => (
+          {Object.keys(groupedBudgets).map(key => (
             <li key={key} className="mb-4">
               <h3 className="text-lg font-semibold">{key}</h3>
               <ul>
-                {groupedBudgets[key].map((budget) => (
-                  <li key={budget._id} className="border-b py-2">
-                    {budget.name}: ${budget.amount}
+                {groupedBudgets[key].map(budget => (
+                  <li key={budget._id} className="border-b py-2 flex justify-between items-center">
+                    <span>
+                      {budget.name}: ${budget.amount}
+                    </span>
+                    <div>
+                      <button onClick={() => handleEdit(budget)} className="text-blue-500 px-2">
+                        <Pencil size={16} />
+                      </button>
+                      <button onClick={() => handleDelete(budget._id)} className="text-red-500 px-2">
+                        <Trash size={16} />
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -88,9 +119,10 @@ export default function BudgetPage() {
         </ul>
       </div>
 
-      {/* Right Side - Add New Budget */}
       <div className="w-1/2">
-        <h2 className="text-2xl font-semibold mb-2">Create New Budget</h2>
+        <h2 className="text-2xl font-semibold mb-2">
+          {editingId ? "Edit Budget" : "Create New Budget"}
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block font-medium">
@@ -167,7 +199,7 @@ export default function BudgetPage() {
             type="submit"
             className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Add Budget
+            {editingId ? "Update Budget" : "Add Budget"}
           </button>
         </form>
       </div>

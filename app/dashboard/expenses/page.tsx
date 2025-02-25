@@ -1,8 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Pencil, Trash } from "lucide-react";
 
 interface Expense {
-  id: number;
+  _id: string;
   description: string;
   amount: number;
   month: string;
@@ -10,57 +11,81 @@ interface Expense {
 }
 
 export default function ExpensePage() {
-  const [expenses, setExpenses] = useState<Expense[]>([
-    {
-      id: 1,
-      description: "Electricity Bill",
-      amount: 150,
-      month: "January",
-      year: 2023,
-    },
-    {
-      id: 2,
-      description: "Water Bill",
-      amount: 50,
-      month: "January",
-      year: 2023,
-    },
-  ]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
   const [newExpense, setNewExpense] = useState({
     description: "",
     amount: "",
     month: "",
     year: "",
   });
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchExpenses() {
+      const response = await fetch("/api/expenses");
+      const data = await response.json();
+      setExpenses(data);
+    }
+    fetchExpenses();
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
-    setNewExpense({ ...newExpense, [name]: value });
+    setNewExpense({ ...newExpense, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newId = expenses.length ? expenses[expenses.length - 1].id + 1 : 1;
-    setExpenses([
-      ...expenses,
-      {
-        id: newId,
-        description: newExpense.description,
-        amount: parseFloat(newExpense.amount),
-        month: newExpense.month,
-        year: parseInt(newExpense.year),
-      },
-    ]);
+    if (editingId) {
+      // Update existing expense
+      const response = await fetch(`/api/expenses/${editingId}`, {
+        method: "PUT",
+        body: JSON.stringify(newExpense),
+        headers: { "Content-Type": "application/json" },
+      });
+      if (response.ok) {
+        const updatedExpense = await response.json();
+        setExpenses(
+          expenses.map((e) => (e._id === editingId ? updatedExpense : e))
+        );
+        setEditingId(null);
+      }
+    } else {
+      // Create new expense
+      const response = await fetch("/api/expenses", {
+        method: "POST",
+        body: JSON.stringify(newExpense),
+        headers: { "Content-Type": "application/json" },
+      });
+      if (response.ok) {
+        const addedExpense = await response.json();
+        setExpenses([...expenses, addedExpense]);
+      }
+    }
     setNewExpense({ description: "", amount: "", month: "", year: "" });
+  };
+
+  const handleEdit = (expense: Expense) => {
+    setNewExpense({
+      description: expense.description,
+      amount: String(expense.amount),
+      month: expense.month,
+      year: String(expense.year),
+    });
+    setEditingId(expense._id);
+  };
+
+  const handleDelete = async (id: string) => {
+    const response = await fetch(`/api/expenses/${id}`, { method: "DELETE" });
+    if (response.ok) {
+      setExpenses(expenses.filter((e) => e._id !== id));
+    }
   };
 
   const groupedExpenses = expenses.reduce((acc, expense) => {
     const key = `${expense.month}-${expense.year}`;
-    if (!acc[key]) {
-      acc[key] = [];
-    }
+    if (!acc[key]) acc[key] = [];
     acc[key].push(expense);
     return acc;
   }, {} as Record<string, Expense[]>);
@@ -76,8 +101,27 @@ export default function ExpensePage() {
               <h3 className="text-lg font-semibold">{key}</h3>
               <ul>
                 {groupedExpenses[key].map((expense) => (
-                  <li key={expense.id} className="border-b py-2">
-                    {expense.description}: ${expense.amount}
+                  <li
+                    key={expense._id}
+                    className="border-b py-2 flex justify-between items-center"
+                  >
+                    <span>
+                      {expense.description}: ${expense.amount}
+                    </span>
+                    <div>
+                      <button
+                        onClick={() => handleEdit(expense)}
+                        className="text-blue-500 px-2"
+                      >
+                        <Pencil size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(expense._id)}
+                        className="text-red-500 px-2"
+                      >
+                        <Trash size={16} />
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -85,8 +129,11 @@ export default function ExpensePage() {
           ))}
         </ul>
       </div>
+
       <div className="w-1/2">
-        <h2 className="text-2xl font-semibold mb-2">Create New Expense</h2>
+        <h2 className="text-2xl font-semibold mb-2">
+          {editingId ? "Edit Expense" : "Create New Expense"}
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block font-medium">
@@ -163,7 +210,7 @@ export default function ExpensePage() {
             type="submit"
             className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Add Expense
+            {editingId ? "Update Expense" : "Add Expense"}
           </button>
         </form>
       </div>

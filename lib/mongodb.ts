@@ -1,13 +1,23 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URI as string;
+const MONGODB_URI = process.env.MONGODB_URI || "";
 
-const connectDB = async () => {
+if (!MONGODB_URI) {
+  throw new Error("Please define the MONGO_URI environment variable inside .env.local");
+}
+
+const dbConnect = async () => {
   if (mongoose.connection.readyState >= 1) return;
-  if (!MONGODB_URI) {
-    throw new Error("MONGODB_URI is not defined");
+
+  try {
+    await mongoose.connect(MONGODB_URI, {
+      dbName: "budget",
+    });
+  } catch (error) {
+    console.error("MongoDB connection error:", error);
+    throw new Error("Failed to connect to MongoDB");
   }
-  await mongoose.connect(MONGODB_URI);
 };
 
-export default connectDB;
+
+export default dbConnect;

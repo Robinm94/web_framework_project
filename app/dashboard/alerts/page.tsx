@@ -191,7 +191,7 @@ export default function AlertsPage() {
     } else {
       return {
         color: "text-green-500",
-        bgColor: "bg-green-100",
+        bgColor: "bg-white-100",
         icon: <CheckCircle2 size={16} className="text-green-500" />,
         text: "Active",
       };

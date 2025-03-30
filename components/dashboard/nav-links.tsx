@@ -13,6 +13,8 @@ const links = [
     href: "/dashboard/budgets",
   },
   { name: "Expenses", href: "/dashboard/expenses" },
+  { name: "Alerts", href: "/dashboard/alerts" },
+  { name: "Notifications", href: "/dashboard/notifications" },
 ];
 
 export default function NavLinks() {

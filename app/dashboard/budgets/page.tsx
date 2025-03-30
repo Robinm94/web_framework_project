@@ -1,17 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Pencil, Trash } from "lucide-react";
-
-interface Budget {
-  _id: string;
-  name: string;
-  amount: number;
-  month: string;
-  year: number;
-}
+import { IBudget } from "@/models/Budget";
 
 export default function BudgetPage() {
-  const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [budgets, setBudgets] = useState<IBudget[]>([]);
   const [newBudget, setNewBudget] = useState({
     name: "",
     amount: "",
@@ -24,7 +17,10 @@ export default function BudgetPage() {
     async function fetchBudgets() {
       const response = await fetch("/api/budgets");
       const data = await response.json();
-      setBudgets(data);
+      console.log("Budgets:", data);
+      if (response.ok) {
+        setBudgets(data);
+      }
     }
     fetchBudgets();
   }, []);
@@ -46,7 +42,9 @@ export default function BudgetPage() {
       });
       if (response.ok) {
         const updatedBudget = await response.json();
-        setBudgets(budgets.map(b => (b._id === editingId ? updatedBudget : b)));
+        setBudgets(
+          budgets.map((b) => (b._id === editingId ? updatedBudget : b))
+        );
         setEditingId(null);
       }
     } else {
@@ -64,7 +62,7 @@ export default function BudgetPage() {
     setNewBudget({ name: "", amount: "", month: "", year: "" });
   };
 
-  const handleEdit = (budget: Budget) => {
+  const handleEdit = (budget: IBudget) => {
     setNewBudget({
       name: budget.name,
       amount: String(budget.amount),
@@ -77,16 +75,18 @@ export default function BudgetPage() {
   const handleDelete = async (id: string) => {
     const response = await fetch(`/api/budgets/${id}`, { method: "DELETE" });
     if (response.ok) {
-      setBudgets(budgets.filter(b => b._id !== id));
+      setBudgets(budgets.filter((b) => b._id !== id));
     }
   };
 
-  const groupedBudgets = budgets.reduce((acc, budget) => {
-    const key = `${budget.month}-${budget.year}`;
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(budget);
-    return acc;
-  }, {} as Record<string, Budget[]>);
+  const groupedBudgets = budgets
+    ? budgets.reduce((acc, budget) => {
+        const key = `${budget.month}-${budget.year}`;
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(budget);
+        return acc;
+      }, {} as Record<string, IBudget[]>)
+    : {};
 
   return (
     <div className="p-4 max-w-4xl mx-auto flex space-x-4">
@@ -94,20 +94,29 @@ export default function BudgetPage() {
         <h1 className="text-2xl font-bold mb-4">Budget</h1>
         <h2 className="text-xl font-semibold mb-2">Existing Budgets</h2>
         <ul className="mb-4">
-          {Object.keys(groupedBudgets).map(key => (
+          {Object.keys(groupedBudgets).map((key) => (
             <li key={key} className="mb-4">
               <h3 className="text-lg font-semibold">{key}</h3>
               <ul>
-                {groupedBudgets[key].map(budget => (
-                  <li key={budget._id} className="border-b py-2 flex justify-between items-center">
+                {groupedBudgets[key].map((budget) => (
+                  <li
+                    key={budget._id}
+                    className="border-b py-2 flex justify-between items-center"
+                  >
                     <span>
                       {budget.name}: ${budget.amount}
                     </span>
                     <div>
-                      <button onClick={() => handleEdit(budget)} className="text-blue-500 px-2">
+                      <button
+                        onClick={() => handleEdit(budget)}
+                        className="text-blue-500 px-2"
+                      >
                         <Pencil size={16} />
                       </button>
-                      <button onClick={() => handleDelete(budget._id)} className="text-red-500 px-2">
+                      <button
+                        onClick={() => handleDelete(budget._id)}
+                        className="text-red-500 px-2"
+                      >
                         <Trash size={16} />
                       </button>
                     </div>

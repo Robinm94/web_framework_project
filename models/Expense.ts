@@ -1,17 +1,16 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IExpense extends Document {
+  _id: string;
   description: string;
   amount: number;
-  month: string;
-  year: number;
+  budgetid: string;
 }
 
 const ExpenseSchema: Schema = new Schema({
   description: { type: String, required: true },
   amount: { type: Number, required: true },
-  month: { type: String, required: true },
-  year: { type: Number, required: true },
+  budgetid: { type: String, required: true },
 });
 
 export default mongoose.models.Expense ||

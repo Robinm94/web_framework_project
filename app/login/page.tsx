@@ -14,20 +14,21 @@ export default function LoginPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
+      credentials: "include",
     });
-
-    const data = await response.json();
-    setMessage(data.message);
-
     if (response.ok) {
+      // No need to manually store token
       window.location.href = "/dashboard";
+    } else {
+      console.log(response);
+      setMessage("Login failed");
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="bg-slate-900 p-8 rounded-md shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
+        <h1 className="text-2xl font-bold mb-2 text-center">Login</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium">Email</label>
@@ -49,18 +50,21 @@ export default function LoginPage() {
               required
             />
           </div>
-          <button type="submit" className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md">
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
             Login
           </button>
-          <div className="mt-4 text-center">
+        </form>
+        <div className="mt-2 w-full text-center">
           <Link
-            href="/dashboard"
-            className="bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            href="/signup"
+            className="block w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Temp: Go to Dashboard
+            Register
           </Link>
         </div>
-        </form>
         {message && <p className="mt-4 text-center text-red-500">{message}</p>}
       </div>
     </div>

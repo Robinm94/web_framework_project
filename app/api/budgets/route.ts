@@ -1,12 +1,26 @@
 import { NextResponse } from "next/server";
 import Budget from "@/models/Budget";
-import connectDB from "@/lib/mongodb";
+import connectToMongoDB from "@/lib/connectdb";
+import getAuthenticatedUserId from "@/lib/getauthenticateduserid";
 
-// Get all budgets (READ)
+// Get all budgets for the authenticated user (READ)
 export async function GET() {
   try {
-    await connectDB();
-    const budgets = await Budget.find();
+    await connectToMongoDB();
+
+    const userId = await getAuthenticatedUserId();
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
+    // Filter budgets by user ID
+    console.log("User ID:", userId);
+    const budgets = await Budget.find({ userid: userId });
+    console.log("Budgets:", budgets);
     return NextResponse.json(budgets);
   } catch (error) {
     console.error("Error fetching budgets:", error);
@@ -20,7 +34,17 @@ export async function GET() {
 // Add a new budget (CREATE)
 export async function POST(req: Request) {
   try {
-    await connectDB();
+    await connectToMongoDB();
+
+    const userId = await getAuthenticatedUserId();
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
     const { name, amount, month, year } = await req.json();
 
     if (!name || !amount || !month || !year) {
@@ -30,7 +54,15 @@ export async function POST(req: Request) {
       );
     }
 
-    const newBudget = new Budget({ name, amount, month, year });
+    // Include the user ID when creating the budget
+    const newBudget = new Budget({
+      name,
+      amount,
+      month,
+      year,
+      userid: userId,
+    });
+
     await newBudget.save();
     return NextResponse.json(newBudget, { status: 201 });
   } catch (error) {

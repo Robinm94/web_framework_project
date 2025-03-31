@@ -6,7 +6,10 @@ import Budget from "@/models/Budget";
 import connectToMongoDB from "@/lib/connectdb";
 
 // Get a single expense (READ)
-export async function GET({ params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     await connectToMongoDB();
 
@@ -97,7 +100,7 @@ export async function PUT(
 // Delete an expense (DELETE)
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const userId = await getAuthenticatedUserId();
@@ -109,7 +112,7 @@ export async function DELETE(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Use ExpenseManager to delete the expense, adjust budget, and handle alerts
     await ExpenseManager.deleteExpense(id, userId);

@@ -5,7 +5,10 @@ import connectToMongoDB from "@/lib/connectdb";
 import getAuthenticatedUserId from "@/lib/getauthenticateduserid";
 
 // Get a single alert (READ)
-export async function GET({ params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     await connectToMongoDB();
 
@@ -47,7 +50,7 @@ export async function GET({ params }: { params: Promise<{ id: string }> }) {
 // Update an alert (UPDATE)
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToMongoDB();
@@ -61,7 +64,7 @@ export async function PUT(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const { description, targetAmount, status } = await req.json();
 
     // Find the alert
@@ -105,7 +108,10 @@ export async function PUT(
 }
 
 // Delete an alert (DELETE)
-export async function DELETE({ params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     await connectToMongoDB();
 

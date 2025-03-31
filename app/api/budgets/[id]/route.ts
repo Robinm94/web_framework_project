@@ -48,7 +48,7 @@ export async function GET(
 // Update a budget (UPDATE)
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToMongoDB();
@@ -63,7 +63,7 @@ export async function PUT(
     }
 
     const { name, amount, month, year } = await req.json();
-    const { id } = params;
+    const { id } = await params;
 
     // First check if the budget exists and belongs to the user
     const existingBudget = await Budget.findById(id);

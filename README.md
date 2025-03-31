@@ -12,6 +12,38 @@ Finance Tracker is a web application built with Next.js that helps users manage 
 - Notifications & Reminders: Alerts for upcoming bills and savings targets.
 - Analytics Dashboard: Visual representation of financial data using charts.
 
+## List of Features & Team Responsibilities
+
+- User Authentication and Secure Data Storage
+
+Description: Users can sign up, log in, and securely store their financial data with encryption measures.
+Assigned to: Robin Mathew
+
+- Expense and Income Tracking with Categories
+
+Description: Users can track their income and expenses by categorizing them into different segments such as rent, food, and entertainment.
+Assigned to: Robin Mathew
+
+- Budget Creation and Monitoring
+
+Description: Allows users to set monthly budgets, track their spending, and compare actual expenses with budgeted amounts.
+Assigned to: Abhisha Mathew
+
+- Alerts
+
+Description: Provides alerts to remind users of their spending habits, offering insights into expenses to help manage finances effectively.
+Assigned to: Abhisha Mathew
+
+- Export Data as CSV or PDF for Offline Use
+
+Description: Enables users to download their financial records in CSV or PDF format for personal use or record-keeping.
+Assigned to: Jisna Mathew
+
+- Notifications and Reminders for Bills or Saving Goals
+
+Description: Provides alerts and reminders for upcoming bill payments or financial goal milestones.
+Assigned to: Jisna Mathew
+
 ## Tech Stack
 
 - Frontend: Next.js (TypeScript)
@@ -41,14 +73,6 @@ Finance Tracker is a web application built with Next.js that helps users manage 
 
    ```bash
    npm install
-   ```
-
-3. Set up environment variables:
-
-   Create a `.env.local` file in the root directory and add your MongoDB URI:
-
-   ```env
-   MONGODB_URI=mongodb+srv://admin:999123@cluster0.ne8rj.mongodb.net/budget
    ```
 
 ### Running the Development Server

@@ -29,7 +29,7 @@ Assigned to: Robin Mathew
 Description: Allows users to set monthly budgets, track their spending, and compare actual expenses with budgeted amounts.
 Assigned to: Abhisha Mathew
 
-Alerts
+- Alerts
 
 Description: Provides alerts to remind users of their spending habits, offering insights into expenses to help manage finances effectively.
 Assigned to: Abhisha Mathew

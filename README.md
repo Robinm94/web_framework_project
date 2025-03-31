@@ -4,10 +4,22 @@ Finance Tracker is a web application built with Next.js that helps users manage 
 
 ## Features
 
-- User Authentication: Register and log in to access the dashboard.
-- Budget Management: Create, read, update, and delete budgets.
-- Expense Management: Create, read, update, and delete expenses.
-- Dashboard: View grouped budgets and expenses by month and year.
+- User Authentication: Secure login and registration system.
+- Expense & Income Tracking: Categorized records of all financial transactions.
+- Budget Management: Set and monitor spending limits.
+- Financial Goal Setting: Define and track savings goals.
+- Data Export: Export financial records in CSV or PDF formats.
+- Notifications & Reminders: Alerts for upcoming bills and savings targets.
+- Analytics Dashboard: Visual representation of financial data using charts.
+
+## Tech Stack
+
+- Frontend: Next.js (TypeScript)
+- Backend: Node.js with Express.js
+- Database: MongoDB (MongoDB Atlas)
+- Authentication: JWT
+- Styling: Tailwind CSS
+- Deployment: Vercel
 
 ## Getting Started
 

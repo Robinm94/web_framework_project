@@ -12,14 +12,27 @@ export default function BudgetPage() {
     year: "",
   });
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     async function fetchBudgets() {
-      const response = await fetch("/api/budgets");
-      const data = await response.json();
-      console.log("Budgets:", data);
-      if (response.ok) {
+      try {
+        setLoading(true);
+        const response = await fetch("/api/budgets");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch budgets");
+        }
+
+        const data = await response.json();
         setBudgets(data);
+        setError("");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+        console.error("Error fetching budgets:", err);
+      } finally {
+        setLoading(false);
       }
     }
     fetchBudgets();
@@ -93,39 +106,47 @@ export default function BudgetPage() {
       <div className="w-1/2 overflow-y-auto h-screen">
         <h1 className="text-2xl font-bold mb-4">Budget</h1>
         <h2 className="text-xl font-semibold mb-2">Existing Budgets</h2>
-        <ul className="mb-4">
-          {Object.keys(groupedBudgets).map((key) => (
-            <li key={key} className="mb-4">
-              <h3 className="text-lg font-semibold">{key}</h3>
-              <ul>
-                {groupedBudgets[key].map((budget) => (
-                  <li
-                    key={budget._id}
-                    className="border-b py-2 flex justify-between items-center"
-                  >
-                    <span>
-                      {budget.name}: ${budget.amount}
-                    </span>
-                    <div>
-                      <button
-                        onClick={() => handleEdit(budget)}
-                        className="text-blue-500 px-2"
+        {error && <div className="text-red-500 mb-4">{error}</div>}
+        {loading && <div className="text-center">Loading...</div>}
+        {!loading &&
+          error === "" &&
+          (Object.keys(groupedBudgets).length === 0 ? (
+            <p>No budgets found. Create your first budget!</p>
+          ) : (
+            <ul className="mb-4">
+              {Object.keys(groupedBudgets).map((key) => (
+                <li key={key} className="mb-4">
+                  <h3 className="text-lg font-semibold">{key}</h3>
+                  <ul>
+                    {groupedBudgets[key].map((budget) => (
+                      <li
+                        key={budget._id}
+                        className="border-b py-2 flex justify-between items-center"
                       >
-                        <Pencil size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(budget._id)}
-                        className="text-red-500 px-2"
-                      >
-                        <Trash size={16} />
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </li>
+                        <span>
+                          {budget.name}: ${budget.amount}
+                        </span>
+                        <div>
+                          <button
+                            onClick={() => handleEdit(budget)}
+                            className="text-blue-500 px-2"
+                          >
+                            <Pencil size={16} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(budget._id)}
+                            className="text-red-500 px-2"
+                          >
+                            <Trash size={16} />
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
           ))}
-        </ul>
       </div>
 
       <div className="w-1/2">

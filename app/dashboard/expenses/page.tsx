@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { Pencil, Trash } from "lucide-react";
 import { IExpense } from "@/models/Expense";
 import { IBudget } from "@/models/Budget";
+import { jsPDF } from "jspdf";
+import Papa from "papaparse";
 
 export default function ExpensePage() {
   const [expenses, setExpenses] = useState<IExpense[]>([]);
@@ -141,6 +143,30 @@ export default function ExpensePage() {
       : { name: "Unknown budget", month: "", year: 0 };
   };
 
+    const exportCSV = () => {
+      const csv = Papa.unparse(budgets);
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "expenses.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+  
+    const exportPDF = () => {
+      const doc = new jsPDF();
+      doc.text("Budget Report", 10, 10);
+      budgets.forEach((budget, index) => {
+        doc.text(
+          `${index + 1}. ${budget.name}: $${budget.amount} (${budget.month} ${budget.year})`,
+          10,
+          20 + index * 10
+        );
+      });
+      doc.save("expenses.pdf");
+    };
+
   // Group expenses by budget
   const groupedExpenses = expenses.reduce((acc, expense) => {
     const budgetDetails = getBudgetDetails(expense.budgetid);
@@ -155,6 +181,10 @@ export default function ExpensePage() {
       <div className="lg:w-1/2 overflow-y-auto h-screen mb-6 lg:mb-0">
         <h1 className="text-2xl font-bold mb-4">Expenses</h1>
         <h2 className="text-xl font-semibold mb-2">Existing Expenses</h2>
+        <div className="flex space-x-2 mb-4">
+          <button onClick={exportCSV} className="bg-blue-500 text-white px-4 py-2 rounded">Export as CSV</button>
+          <button onClick={exportPDF} className="bg-red-500 text-white px-4 py-2 rounded">Export as PDF</button>
+        </div>
 
         {error && <div className="text-red-500 mb-4">{error}</div>}
         {loading && <div className="text-center">Loading...</div>}

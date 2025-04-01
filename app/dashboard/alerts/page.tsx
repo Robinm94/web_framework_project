@@ -211,7 +211,7 @@ export default function AlertsPage() {
           (Object.keys(groupedAlerts).length === 0 ? (
             <p>No alerts found. Create your first alert!</p>
           ) : (
-            <ul className="mb-4 space-y-6">
+            <ul className="mb-4 space-y-6 ">
               {Object.keys(groupedAlerts).map((budgetName) => (
                 <li key={budgetName} className="mb-4">
                   <h3 className="text-lg font-semibold flex items-center">
@@ -233,7 +233,7 @@ export default function AlertsPage() {
                       return (
                         <li
                           key={alert._id}
-                          className={`border rounded-md p-3 ${status.bgColor}`}
+                          className={`border rounded-md p-3 ${status.bgColor} text-slate-800`}
                         >
                           <div className="flex justify-between items-start">
                             <div>

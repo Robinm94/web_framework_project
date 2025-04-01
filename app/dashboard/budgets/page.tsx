@@ -19,6 +19,7 @@ export default function BudgetPage() {
 
   useEffect(() => {
     async function fetchBudgets() {
+      setLoading(true);
       try {
         // Fetch budgets from the API
         const budgetResponse = await fetch("/api/budgets");
@@ -27,8 +28,7 @@ export default function BudgetPage() {
         }
         const budgetData = await budgetResponse.json();
         setBudgets(budgetData);
-      }
-      catch (err) {
+      } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
         setLoading(false);
@@ -109,7 +109,9 @@ export default function BudgetPage() {
     doc.text("Budget Report", 10, 10);
     budgets.forEach((budget, index) => {
       doc.text(
-        `${index + 1}. ${budget.name}: $${budget.amount} (${budget.month} ${budget.year})`,
+        `${index + 1}. ${budget.name}: $${budget.amount} (${budget.month} ${
+          budget.year
+        })`,
         10,
         20 + index * 10
       );
@@ -120,11 +122,11 @@ export default function BudgetPage() {
   // Group budgets by month and year
   const groupedBudgets = budgets
     ? budgets.reduce((acc, budget) => {
-      const key = `${budget.month}-${budget.year}`;
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(budget);
-      return acc;
-    }, {} as Record<string, IBudget[]>)
+        const key = `${budget.month}-${budget.year}`;
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(budget);
+        return acc;
+      }, {} as Record<string, IBudget[]>)
     : {};
 
   return (
@@ -133,8 +135,18 @@ export default function BudgetPage() {
         <h1 className="text-2xl font-bold mb-4">Budget</h1>
         <h2 className="text-xl font-semibold mb-2">Existing Budgets</h2>
         <div className="flex space-x-2 mb-4">
-          <button onClick={exportCSV} className="bg-blue-500 text-white px-4 py-2 rounded">Export as CSV</button>
-          <button onClick={exportPDF} className="bg-red-500 text-white px-4 py-2 rounded">Export  as PDF</button>
+          <button
+            onClick={exportCSV}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Export as CSV
+          </button>
+          <button
+            onClick={exportPDF}
+            className="bg-red-500 text-white px-4 py-2 rounded"
+          >
+            Export as PDF
+          </button>
         </div>
         {error && <div className="text-red-500 mb-4">{error}</div>}
         {loading && <div className="text-center">Loading...</div>}
@@ -178,7 +190,6 @@ export default function BudgetPage() {
             </ul>
           ))}
       </div>
-
 
       <div className="w-1/2">
         <h2 className="text-2xl font-semibold mb-2">

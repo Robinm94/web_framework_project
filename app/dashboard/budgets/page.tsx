@@ -202,6 +202,7 @@ export default function BudgetPage() {
               <input
                 type="text"
                 name="name"
+                placeholder="e.g., Groceries, Rent, Entertainment"
                 value={newBudget.name}
                 onChange={handleInputChange}
                 required
@@ -215,6 +216,7 @@ export default function BudgetPage() {
               <input
                 type="number"
                 name="amount"
+                placeholder="e.g., 500"
                 value={newBudget.amount}
                 onChange={handleInputChange}
                 required
@@ -260,6 +262,7 @@ export default function BudgetPage() {
               <input
                 type="number"
                 name="year"
+                placeholder="e.g., 2025"
                 value={newBudget.year}
                 onChange={handleInputChange}
                 required

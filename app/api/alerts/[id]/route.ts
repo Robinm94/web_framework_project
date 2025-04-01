@@ -93,8 +93,6 @@ export async function PUT(
     if (budget.expenditure >= alert.targetAmount && alert.status === "ACTIVE") {
       alert.status = "TRIGGERED";
       await alert.save();
-
-      // You could also create a notification here if needed
     }
 
     return NextResponse.json(alert);

@@ -84,8 +84,6 @@ export async function POST(req: Request) {
     if (budget.expenditure >= targetAmount) {
       newAlert.status = "TRIGGERED";
       await newAlert.save();
-
-      // You could also create a notification here if needed
     }
 
     return NextResponse.json(newAlert, { status: 201 });

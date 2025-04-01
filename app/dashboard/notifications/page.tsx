@@ -19,6 +19,7 @@ export default function NotificationsPage() {
   }, []);
 
   const fetchNotifications = async () => {
+    // Fetch notifications from the API
     try {
       setLoading(true);
       const response = await fetch("/api/notifications");
@@ -35,6 +36,7 @@ export default function NotificationsPage() {
     }
   };
 
+  // Function to mark a single notification as read
   const markAsRead = async (id: string) => {
     try {
       const response = await fetch("/api/notifications", {
@@ -59,6 +61,7 @@ export default function NotificationsPage() {
     }
   };
 
+  // Function to mark all notifications as read
   const markAllAsRead = async () => {
     try {
       const response = await fetch("/api/notifications", {
@@ -110,18 +113,16 @@ export default function NotificationsPage() {
           {notifications.map((notification) => (
             <div
               key={notification._id}
-              className={`border rounded-lg p-4 ${
-                notification.isRead
+              className={`border rounded-lg p-4 ${notification.isRead
                   ? "bg-gray-100"
                   : "bg-white border-indigo-300 shadow"
-              }`}
+                }`}
             >
               <div className="flex justify-between">
                 <div className="flex-1">
                   <p
-                    className={`text-black ${
-                      !notification.isRead ? "font-medium" : ""
-                    }`}
+                    className={`text-black ${!notification.isRead ? "font-medium" : ""
+                      }`}
                   >
                     {notification.message}
                   </p>

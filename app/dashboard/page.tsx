@@ -137,7 +137,7 @@ export default function Dashboard() {
   return (
     <div className="p-4 max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Financial Dashboard</h1>
-
+      
       {error && (
         <div className="text-red-500 mb-4 p-2 bg-red-50 rounded">{error}</div>
       )}

@@ -144,7 +144,7 @@ export default function ExpensePage() {
   };
 
   const exportCSV = () => {
-    const csv = Papa.unparse(budgets);
+    const csv = Papa.unparse(expenses);
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -156,12 +156,10 @@ export default function ExpensePage() {
 
   const exportPDF = () => {
     const doc = new jsPDF();
-    doc.text("Budget Report", 10, 10);
-    budgets.forEach((budget, index) => {
+    doc.text("Expense Report", 10, 10);
+    expenses.forEach((expense, index) => {
       doc.text(
-        `${index + 1}. ${budget.name}: $${budget.amount} (${budget.month} ${
-          budget.year
-        })`,
+        `${index + 1}. ${expense.description}: $${expense.amount}`,
         10,
         20 + index * 10
       );

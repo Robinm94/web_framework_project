@@ -15,6 +15,7 @@ The Personal Finance Tracker is a web application designed to help users manage 
 ## Documentation
 
 ### Overview
+
 Finance Tracker allows users to take control of their finances by providing an intuitive interface for tracking expenses, setting budgets, and monitoring financial goals.
 
 ### How to Run the Application Locally
@@ -27,25 +28,30 @@ Finance Tracker allows users to take control of their finances by providing an i
 #### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/your-username/finance-tracker.git
    cd finance-tracker
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Start the development server:
+
    ```bash
    npm run dev
    # or
    yarn dev
    ```
+
    Open [http://localhost:3000](http://localhost:3000) in your browser to see the app.
 
 4. To build the application for production, run:
+
    ```bash
    npm run build
    # or
@@ -60,11 +66,9 @@ Finance Tracker allows users to take control of their finances by providing an i
    ```
 
 ### Deployment
-The application is deployed on Vercel and can be accessed here:
 
-```
+The application is deployed on Vercel and can be accessed here:
 https://web-framework-project.vercel.app/
-```
 
 ## Project Structure
 
@@ -89,15 +93,15 @@ https://web-framework-project.vercel.app/
 
 ## Team Contributions
 
-| Feature                                      | Description | Assigned to |
-|----------------------------------------------|-------------|-------------|
-| User Authentication & Secure Data Storage   | Users can sign up, log in, and securely store financial data with encryption measures. | Robin Mathew |
-| Expense                      | Can track expenses for each budget. | Jisna Mathew |
-| Budget Creation and Monitoring              | Allows users to set monthly budgets, track spending, and compare actual expenses with budgeted amounts. | Abhisha Mathew |
-| Alerts                                      | Users can set spending thresholds, and the system notifies them when they exceed their limits. | Robin Mathew |
-| Notifications                 | Alerts for budget threshold warnings. | Robin Mathew |
-| Analytics Dashboard                         | Visual representation of financial data using charts. | Jisna Mathew |
-| Export Data                                 | Users can export financial records as PDF or CSV for budget and expense tracking. | Abhisha Mathew |
+| Feature                                   | Description                                                                                             | Assigned to    |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------- |
+| User Authentication & Secure Data Storage | Users can sign up, log in, and securely store financial data with encryption measures.                  | Robin Mathew   |
+| Expense                                   | Can track expenses for each budget.                                                                     | Jisna Mathew   |
+| Budget Creation and Monitoring            | Allows users to set monthly budgets, track spending, and compare actual expenses with budgeted amounts. | Abhisha Mathew |
+| Alerts                                    | Users can set spending thresholds, and the system notifies them when they exceed their limits.          | Robin Mathew   |
+| Notifications                             | Alerts for budget threshold warnings.                                                                   | Robin Mathew   |
+| Analytics Dashboard                       | Visual representation of financial data using charts.                                                   | Jisna Mathew   |
+| Export Data                               | Users can export financial records as PDF or CSV for budget and expense tracking.                       | Abhisha Mathew |
 
 ## Tech Stack
 
@@ -115,4 +119,3 @@ To learn more about Next.js, check out:
 - [Next.js Documentation](https://nextjs.org/docs) - Learn about Next.js features and API.
 - [Learn Next.js](https://nextjs.org/learn) - Interactive Next.js tutorial.
 - [Next.js GitHub Repository](https://github.com/2025-Winter-ITE-5425-IRA/project-phases-the-mathews) - Feedback and contributions are welcome!
-
